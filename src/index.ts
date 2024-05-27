@@ -8,6 +8,7 @@ import { dirname, join } from 'path';
 import * as path from 'path';
 import Fastify from 'fastify';
 import closeWithGrace from 'close-with-grace';
+import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -30,7 +31,7 @@ const envToLogger = {
 
 const app = Fastify({
   logger: envToLogger[environment] ?? true,
-});
+}).withTypeProvider<TypeBoxTypeProvider>();
 
 app.register(AutoLoad, {
   dir: join(__dirname, 'plugins'),
@@ -39,6 +40,7 @@ app.register(AutoLoad, {
 app.register(AutoLoad, {
   dir: path.join(__dirname, 'routes'),
   forceESM: true,
+  options: { prefix: '/api' },
 });
 
 app.listen({
